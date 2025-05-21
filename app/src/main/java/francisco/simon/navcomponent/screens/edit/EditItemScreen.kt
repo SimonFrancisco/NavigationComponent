@@ -1,4 +1,4 @@
-package francisco.simon.navcomponent.screens.add
+package francisco.simon.navcomponent.screens.edit
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,33 +21,53 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import francisco.simon.navcomponent.R
-import francisco.simon.navcomponent.screens.AddItemRoute
+import francisco.simon.navcomponent.screens.EditItemRoute
 import francisco.simon.navcomponent.screens.EventConsumer
 import francisco.simon.navcomponent.screens.LocalNavController
-import francisco.simon.navcomponent.screens.add.AddItemViewModel.ScreenState
+import francisco.simon.navcomponent.screens.edit.EditItemViewModel.ScreenState
 import francisco.simon.navcomponent.screens.routeClass
 
+
 @Composable
-fun AddItemScreen() {
-    val viewModel: AddItemViewModel = hiltViewModel()
-    val screenState by viewModel.stateFlow.collectAsState()
-    AddItemContent(
-        screenState = screenState,
-        onAddButtonClicked = viewModel::add
-    )
+fun EditItemScreen(index: Int) {
+    val viewModel = hiltViewModel<EditItemViewModel, EditItemViewModel.Factory> { factory ->
+        factory.create(index)
+    }
     val navController = LocalNavController.current
-    EventConsumer(viewModel.exitChannel) {
-        if (navController.currentBackStackEntry.routeClass() == AddItemRoute::class) {
+    EventConsumer(channel = viewModel.exitChannel) {
+        if (navController.currentBackStackEntry.routeClass() == EditItemRoute::class) {
             navController.popBackStack()
+        }
+    }
+
+    val screenState by viewModel.stateFlow.collectAsState()
+    EditItemContent(
+        state = screenState,
+        onEditButtonClicked = viewModel::update
+    )
+}
+
+@Composable
+fun EditItemContent(
+    state: ScreenState,
+    onEditButtonClicked: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        when (state) {
+            ScreenState.Loading -> CircularProgressIndicator()
+            is ScreenState.Success -> SuccessEditItemContent(state, onEditButtonClicked)
         }
     }
 }
 
 @Composable
-fun AddItemContent(
-    modifier: Modifier = Modifier,
-    screenState: ScreenState,
-    onAddButtonClicked: (String) -> Unit
+private fun SuccessEditItemContent(
+    state: ScreenState.Success,
+    onEditButtonClicked: (String) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -55,7 +75,7 @@ fun AddItemContent(
         verticalArrangement = Arrangement.Center
     ) {
         var inputText by rememberSaveable {
-            mutableStateOf("")
+            mutableStateOf(state.loadedItem)
         }
         OutlinedTextField(
             value = inputText,
@@ -63,23 +83,22 @@ fun AddItemContent(
                 inputText = text
             },
             placeholder = {
-                Text(stringResource(R.string.enter_new_item))
+                Text(stringResource(R.string.edit_item_title))
             },
-            enabled = screenState.isTextInputEnabled,
+            enabled = !state.isEditInProgress
         )
         Button(
-            onClick = { onAddButtonClicked(inputText) },
-            enabled = screenState.isAddButtonEnabled(inputText)
+            onClick = { onEditButtonClicked(inputText) },
+            enabled = inputText.isNotBlank() && !state.isEditInProgress
         ) {
             Text(
-                text = stringResource(R.string.add),
-
-                )
+                text = stringResource(R.string.edit),
+            )
         }
         Box(
             modifier = Modifier.size(32.dp)
         ) {
-            if (screenState.isProgressVisible) {
+            if (state.isEditInProgress) {
                 CircularProgressIndicator(Modifier.fillMaxSize())
             }
         }
