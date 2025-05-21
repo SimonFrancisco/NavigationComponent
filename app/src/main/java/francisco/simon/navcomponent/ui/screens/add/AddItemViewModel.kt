@@ -1,4 +1,4 @@
-package francisco.simon.navcomponent.screens.add
+package francisco.simon.navcomponent.ui.screens.add
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -39,6 +39,5 @@ class AddItemViewModel @Inject constructor(
         fun isAddButtonEnabled(input: String): Boolean {
             return input.isNotBlank() && !isAddInProgress
         }
-
     }
 }

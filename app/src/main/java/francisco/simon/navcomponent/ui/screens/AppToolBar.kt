@@ -1,4 +1,4 @@
-package francisco.simon.navcomponent.screens
+package francisco.simon.navcomponent.ui.screens
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons

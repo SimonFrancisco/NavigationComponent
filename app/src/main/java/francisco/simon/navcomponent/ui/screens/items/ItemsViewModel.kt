@@ -1,9 +1,10 @@
-package francisco.simon.navcomponent.screens.items
+package francisco.simon.navcomponent.ui.screens.items
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import francisco.simon.navcomponent.model.ItemsRepository
+import francisco.simon.navcomponent.model.LoadResult
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -15,18 +16,16 @@ class ItemsViewModel @Inject constructor(
     itemsRepository: ItemsRepository
 ) : ViewModel() {
 
-    val stateFlow: StateFlow<ScreenState> = itemsRepository.getItems()
-        .map(ScreenState::Success)
+    val stateFlow: StateFlow<LoadResult<ScreenState>> = itemsRepository.getItems()
+        .map{
+            LoadResult.Success(ScreenState(it))
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = ScreenState.Loading
+            initialValue = LoadResult.Loading
         )
 
-    sealed class ScreenState {
-        data object Loading : ScreenState()
-        data class Success(val items: List<String>) : ScreenState()
-    }
-
+        data class ScreenState(val items: List<String>)
 
 }

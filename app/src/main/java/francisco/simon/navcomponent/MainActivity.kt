@@ -22,16 +22,16 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import dagger.hilt.android.AndroidEntryPoint
-import francisco.simon.navcomponent.screens.AddItemRoute
-import francisco.simon.navcomponent.screens.AppToolbar
-import francisco.simon.navcomponent.screens.EditItemRoute
-import francisco.simon.navcomponent.screens.ItemsRoute
-import francisco.simon.navcomponent.screens.LocalNavController
-import francisco.simon.navcomponent.screens.NavigationUpAction
-import francisco.simon.navcomponent.screens.add.AddItemScreen
-import francisco.simon.navcomponent.screens.edit.EditItemScreen
-import francisco.simon.navcomponent.screens.items.ItemsScreen
-import francisco.simon.navcomponent.screens.routeClass
+import francisco.simon.navcomponent.ui.screens.AddItemRoute
+import francisco.simon.navcomponent.ui.screens.AppToolbar
+import francisco.simon.navcomponent.ui.screens.EditItemRoute
+import francisco.simon.navcomponent.ui.screens.ItemsRoute
+import francisco.simon.navcomponent.ui.screens.LocalNavController
+import francisco.simon.navcomponent.ui.screens.NavigationUpAction
+import francisco.simon.navcomponent.ui.screens.add.AddItemScreen
+import francisco.simon.navcomponent.ui.screens.edit.EditItemScreen
+import francisco.simon.navcomponent.ui.screens.items.ItemsScreen
+import francisco.simon.navcomponent.ui.screens.routeClass
 import francisco.simon.navcomponent.ui.theme.NavigationComponentTheme
 
 @AndroidEntryPoint

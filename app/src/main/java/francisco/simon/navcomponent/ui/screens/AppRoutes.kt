@@ -1,4 +1,4 @@
-package francisco.simon.navcomponent.screens
+package francisco.simon.navcomponent.ui.screens
 
 import androidx.navigation.NavBackStackEntry
 import kotlinx.serialization.Serializable
