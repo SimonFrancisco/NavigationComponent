@@ -4,11 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import francisco.simon.navcomponent.model.LoadResult
 import francisco.simon.navcomponent.model.tryUpdate
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ActionViewModel<State, Action>(
@@ -18,11 +16,14 @@ class ActionViewModel<State, Action>(
 
     val stateFlow: StateFlow<LoadResult<State>> = _stateFlow
 
-    private val _exitChannel = Channel<Unit>()
-    val exitChannel: ReceiveChannel<Unit> = _exitChannel
+//    private val _exitChannel = Channel<Unit>()
+//    val exitChannel: ReceiveChannel<Unit> = _exitChannel
+//
+//    private val _errorChannel = Channel<Exception>()
+//    val errorChannel: ReceiveChannel<Exception> = _errorChannel
 
-    private val _errorChannel = Channel<Exception>()
-    val errorChannel: ReceiveChannel<Exception> = _errorChannel
+    private val _screenStateFlow = MutableStateFlow(ScreenState())
+    val screenStateFlow: StateFlow<ScreenState> = _screenStateFlow
 
     init {
         load()
@@ -36,7 +37,10 @@ class ActionViewModel<State, Action>(
                 goBack()
             } catch (e: Exception) {
                 hideProgress()
-                _errorChannel.send(e)
+                //_errorChannel.send(e)
+                _screenStateFlow.update { oldState ->
+                    oldState.copy(error = e)
+                }
             }
         }
     }
@@ -50,18 +54,34 @@ class ActionViewModel<State, Action>(
                 LoadResult.Error(e)
             }
 
-
         }
     }
+
+    fun onExitHandled() {
+        _screenStateFlow.update { oldState ->
+            oldState.copy(exit = null)
+        }
+    }
+
+    fun onErrorHandled() {
+        _screenStateFlow.update { oldState ->
+            oldState.copy(error = null)
+        }
+    }
+
     private fun hideProgress() {
         _stateFlow.tryUpdate(delegate::hideProgress)
     }
+
     private fun showProgress() {
         _stateFlow.tryUpdate(delegate::showProgress)
     }
 
     private suspend fun goBack() {
-        _exitChannel.send(Unit)
+        _screenStateFlow.update { oldState ->
+            oldState.copy(exit = Unit)
+        }
+        //_exitChannel.send(Unit)
     }
 
     interface Delegate<State, Action> {
@@ -70,4 +90,11 @@ class ActionViewModel<State, Action>(
         fun hideProgress(input: State): State
         suspend fun execute(action: Action)
     }
+
+    data class ScreenState(
+        val exit: Unit? = null,
+        val error: Exception? = null
+    )
+
+
 }
