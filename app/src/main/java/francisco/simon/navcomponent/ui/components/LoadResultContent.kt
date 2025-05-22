@@ -1,10 +1,11 @@
-package francisco.simon.navcomponent.model
+package francisco.simon.navcomponent.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import francisco.simon.navcomponent.model.LoadResult
 
 @Composable
 fun <T> LoadResultContent(
