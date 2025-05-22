@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import francisco.simon.navcomponent.ui.components.LoadResultContent
-import francisco.simon.navcomponent.ui.screens.EventConsumer
+import francisco.simon.navcomponent.ui.EventConsumer
 import francisco.simon.navcomponent.ui.screens.LocalNavController
 import francisco.simon.navcomponent.ui.screens.action.ActionViewModel.Delegate
 import francisco.simon.navcomponent.ui.screens.routeClass

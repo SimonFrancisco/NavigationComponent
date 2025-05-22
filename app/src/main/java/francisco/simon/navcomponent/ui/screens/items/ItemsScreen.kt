@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import francisco.simon.navcomponent.model.LoadResult
 import francisco.simon.navcomponent.ui.components.LoadResultContent
-import francisco.simon.navcomponent.ui.screens.EditItemRoute
+import francisco.simon.navcomponent.ui.screens.ItemGraph.EditItemRoute
 import francisco.simon.navcomponent.ui.screens.LocalNavController
 import francisco.simon.navcomponent.ui.screens.items.ItemsViewModel.ScreenState
 

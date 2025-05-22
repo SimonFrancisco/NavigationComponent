@@ -1,4 +1,4 @@
-package francisco.simon.navcomponent.ui.screens
+package francisco.simon.navcomponent.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

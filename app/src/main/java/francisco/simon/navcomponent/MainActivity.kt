@@ -20,18 +20,28 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import dagger.hilt.android.AndroidEntryPoint
-import francisco.simon.navcomponent.ui.screens.AddItemRoute
+import francisco.simon.navcomponent.ui.screens.AppNavigationBar
 import francisco.simon.navcomponent.ui.screens.AppToolbar
-import francisco.simon.navcomponent.ui.screens.EditItemRoute
-import francisco.simon.navcomponent.ui.screens.ItemsRoute
+import francisco.simon.navcomponent.ui.screens.ItemGraph
+import francisco.simon.navcomponent.ui.screens.ItemGraph.AddItemRoute
+import francisco.simon.navcomponent.ui.screens.ItemGraph.EditItemRoute
+import francisco.simon.navcomponent.ui.screens.ItemGraph.ItemsRoute
 import francisco.simon.navcomponent.ui.screens.LocalNavController
+import francisco.simon.navcomponent.ui.screens.MainTabs
 import francisco.simon.navcomponent.ui.screens.NavigationUpAction
+import francisco.simon.navcomponent.ui.screens.ProfileGraph
+import francisco.simon.navcomponent.ui.screens.ProfileGraph.ProfileRoute
+import francisco.simon.navcomponent.ui.screens.SettingsGraph
+import francisco.simon.navcomponent.ui.screens.SettingsGraph.SettingsRoute
 import francisco.simon.navcomponent.ui.screens.add.AddItemScreen
 import francisco.simon.navcomponent.ui.screens.edit.EditItemScreen
 import francisco.simon.navcomponent.ui.screens.items.ItemsScreen
+import francisco.simon.navcomponent.ui.screens.profile.ProfileScreen
 import francisco.simon.navcomponent.ui.screens.routeClass
+import francisco.simon.navcomponent.ui.screens.settings.SettingsScreen
 import francisco.simon.navcomponent.ui.theme.NavigationComponentTheme
 
 @AndroidEntryPoint
@@ -61,6 +71,8 @@ fun NavApp() {
         ItemsRoute::class -> R.string.items_screen_title
         AddItemRoute::class -> R.string.add_item_screen_title
         EditItemRoute::class -> R.string.edit_item_screen
+        SettingsRoute::class -> R.string.edit_item_screen
+        ProfileRoute::class -> R.string.profile_screen
         else -> R.string.app_name
     }
     Scaffold(
@@ -87,6 +99,9 @@ fun NavApp() {
                 }
             }
 
+        },
+        bottomBar = {
+            AppNavigationBar(navController = navController, tabs = MainTabs)
         }
     ) { paddingValues ->
         CompositionLocalProvider(
@@ -94,19 +109,30 @@ fun NavApp() {
         ) {
             NavHost(
                 navController = navController,
-                startDestination = ItemsRoute,
+                startDestination = ItemGraph,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                composable<ItemsRoute> {
-                    ItemsScreen()
+                navigation<ItemGraph>(startDestination = ItemsRoute) {
+                    composable<ItemsRoute> {
+                        ItemsScreen()
+                    }
+                    composable<AddItemRoute> { AddItemScreen() }
+                    composable<EditItemRoute> { entry ->
+                        val route: EditItemRoute = entry.toRoute()
+                        EditItemScreen(index = route.index)
+                    }
                 }
-                composable<AddItemRoute> { AddItemScreen() }
-
-                composable<EditItemRoute> { entry ->
-                    val route: EditItemRoute = entry.toRoute()
-                    EditItemScreen(index = route.index)
+                navigation<ProfileGraph>(startDestination = ProfileRoute) {
+                    composable<ProfileRoute> {
+                        ProfileScreen()
+                    }
+                }
+                navigation<SettingsGraph>(startDestination = SettingsRoute) {
+                    composable<SettingsRoute> {
+                        SettingsScreen()
+                    }
                 }
             }
         }
