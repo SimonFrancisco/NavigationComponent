@@ -1,13 +1,16 @@
 package francisco.simon.navcomponent.ui.screens.action
 
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import francisco.simon.navcomponent.ui.components.LoadResultContent
 import francisco.simon.navcomponent.ui.EventConsumer
+import francisco.simon.navcomponent.ui.components.ExceptionToMessageMapper
 import francisco.simon.navcomponent.ui.screens.LocalNavController
 import francisco.simon.navcomponent.ui.screens.action.ActionViewModel.Delegate
 import francisco.simon.navcomponent.ui.screens.routeClass
@@ -21,7 +24,8 @@ data class ActionContentState<State, Action>(
 fun <State, Action> ActionScreen(
     delegate: Delegate<State, Action>,
     content: @Composable (ActionContentState<State, Action>) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    exceptionToMessageMapper: ExceptionToMessageMapper = ExceptionToMessageMapper.Default
 ) {
     val viewModel = viewModel<ActionViewModel<State, Action>> {
         ActionViewModel(delegate)
@@ -35,6 +39,11 @@ fun <State, Action> ActionScreen(
             navController.popBackStack()
         }
     }
+    val context = LocalContext.current
+    EventConsumer(channel = viewModel.errorChannel) { exception ->
+        val message = ExceptionToMessageMapper.Default.getUserMessage(exception,context)
+        Toast.makeText(context, message,Toast.LENGTH_SHORT).show()
+    }
     val loadResult by viewModel.stateFlow.collectAsState()
     LoadResultContent(
         loadResult = loadResult,
@@ -45,6 +54,7 @@ fun <State, Action> ActionScreen(
             )
             content(actionContentState)
         },
-        modifier = modifier
+        modifier = modifier,
+        onTryAgainAction = viewModel::load
     )
 }

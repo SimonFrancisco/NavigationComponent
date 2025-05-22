@@ -31,6 +31,10 @@ class EditItemViewModel @AssistedInject constructor(
         val isEditInProgress: Boolean = false
     )
 
+    override fun hideProgress(input: ScreenState): ScreenState {
+        return input.copy(isEditInProgress = false)
+
+    }
 
     @AssistedFactory
     interface Factory {

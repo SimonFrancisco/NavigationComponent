@@ -3,9 +3,12 @@ package francisco.simon.navcomponent.model
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
+
 sealed class LoadResult<out T> {
     data object Loading : LoadResult<Nothing>()
     data class Success<T>(val data: T) : LoadResult<T>()
+    data class Error(val exception: Exception) : LoadResult<Nothing>()
+
 }
 
 inline fun <Input, Output> LoadResult<Input>.map(
@@ -14,6 +17,7 @@ inline fun <Input, Output> LoadResult<Input>.map(
     return when (this) {
         LoadResult.Loading -> LoadResult.Loading
         is LoadResult.Success -> LoadResult.Success(mapper(data))
+        is LoadResult.Error -> this
     }
 }
 
